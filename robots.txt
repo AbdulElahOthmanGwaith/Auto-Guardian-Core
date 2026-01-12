@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abdulelahothmangwaith.github.io/Auto-Guardian-Core/sitemap.xml
