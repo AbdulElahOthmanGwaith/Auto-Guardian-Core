@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#F8FAFC"/>
+  
+  <!-- Shield base -->
+  <g transform="translate(256, 256)">
+    <!-- Shield outer shape -->
+    <path d="M0,-200 
+             C100,-200 180,-120 180,0 
+             C180,100 100,180 0,200 
+             C-100,180 -180,100 -180,0 
+             C-180,-120 -100,-200 0,-200 Z" 
+          fill="#0F172A"/>
+    
+    <!-- Shield inner glow -->
+    <path d="M0,-180 
+             C85,-180 155,-105 155,0 
+             C155,85 85,155 0,180 
+             C-85,155 -155,85 -155,0 
+             C-155,-105 -85,-180 0,-180 Z" 
+          fill="#1E293B"/>
+    
+    <!-- Shield crest/highlight -->
+    <path d="M0,-160 
+             C70,-160 130,-90 130,0 
+             C130,75 70,135 0,160 
+             C-70,135 -130,75 -130,0 
+             C-130,-90 -70,-160 0,-160 Z" 
+          fill="#0F172A"/>
+    
+    <!-- Gear mechanism in center -->
+    <g transform="translate(0, -10)">
+      <!-- Main gear -->
+      <circle cx="0" cy="0" r="55" fill="#10B981"/>
+      <circle cx="0" cy="0" r="45" fill="#059669"/>
+      
+      <!-- Gear teeth -->
+      <g fill="#10B981">
+        <rect x="-8" y="-70" width="16" height="20" rx="3"/>
+        <rect x="-8" y="50" width="16" height="20" rx="3"/>
+        <rect x="-70" y="-8" width="20" height="16" rx="3"/>
+        <rect x="50" y="-8" width="20" height="16" rx="3"/>
+        
+        <rect x="30" y="-60" width="16" height="20" rx="3" transform="rotate(45, 30, -60)"/>
+        <rect x="-46" y="-60" width="16" height="20" rx="3" transform="rotate(-45, -46, -60)"/>
+        <rect x="30" y="40" width="16" height="20" rx="3" transform="rotate(-45, 30, 40)"/>
+        <rect x="-46" y="40" width="16" height="20" rx="3" transform="rotate(45, -46, 40)"/>
+        
+        <rect x="50" y="30" width="20" height="16" rx="3" transform="rotate(-45, 50, 30)"/>
+        <rect x="50" y="-46" width="20" height="16" rx="3" transform="rotate(45, 50, -46)"/>
+        <rect x="-70" y="30" width="20" height="16" rx="3" transform="rotate(45, -70, 30)"/>
+        <rect x="-70" y="-46" width="20" height="16" rx="3" transform="rotate(-45, -70, -46)"/>
+      </g>
+      
+      <!-- Center hub -->
+      <circle cx="0" cy="0" r="20" fill="#0F172A"/>
+      <circle cx="0" cy="0" r="12" fill="#10B981"/>
+      
+      <!-- Rotation animation indicator -->
+      <circle cx="0" cy="0" r="35" fill="none" stroke="#10B981" stroke-width="2" opacity="0.5" stroke-dasharray="10 5">
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="8s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- Lock symbol in bottom -->
+    <g transform="translate(0, 70)">
+      <rect x="-25" y="-15" width="50" height="35" rx="5" fill="#10B981"/>
+      <path d="M-20,-15 L-20,-25 C-20,-40 20,-40 20,-25 L20,-15" fill="none" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="0" cy="5" r="8" fill="#0F172A"/>
+      <rect x="-4" y="5" width="8" height="10" fill="#10B981"/>
+    </g>
+  </g>
+  
+  <!-- Decorative elements -->
+  <g fill="#3B82F6" opacity="0.3">
+    <circle cx="80" cy="100" r="5"/>
+    <circle cx="432" cy="120" r="4"/>
+    <circle cx="60" cy="400" r="6"/>
+    <circle cx="450" cy="380" r="5"/>
+  </g>
+  
+  <!-- Protection rays -->
+  <g stroke="#10B981" stroke-width="2" opacity="0.4">
+    <line x1="256" y1="60" x2="256" y2="20"/>
+    <line x1="256" y1="452" x2="256" y2="492"/>
+    <line x1="60" y1="256" x2="20" y2="256"/>
+    <line x1="452" y1="256" x2="492" y2="256"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="256" y="480" text-anchor="middle" font-family="Cairo, Arial" font-size="24" font-weight="bold" fill="#0F172A">Automated Protection</text>
+</svg>

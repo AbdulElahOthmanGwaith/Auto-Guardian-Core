@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Guardian - دليل الإعداد الشامل</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Arabic', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--accent-blue);
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-blue);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--bg-secondary);
+            padding: 60px 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .steps-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--bg-primary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            opacity: 0.5;
+        }
+
+        .step.active {
+            opacity: 1;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .step.completed {
+            opacity: 1;
+            border-color: var(--success);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .step.active .step-number {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .step-code {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .step-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .file-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .step-checklist {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .step-checklist li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .step.completed .check-icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* Files Structure */
+        .structure-section {
+            padding: 60px 40px;
+        }
+
+        .tree-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tree {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .tree-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-right: 20px;
+        }
+
+        .tree-folder {
+            color: var(--warning);
+        }
+
+        .tree-file {
+            color: var(--accent-cyan);
+        }
+
+        .tree-badge {
+            background: var(--accent-purple);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-right: auto;
+        }
+
+        /* Feature Cards */
+        .features-section {
+            background: var(--bg-secondary);
+            padding: 60px 40px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon.security { background: rgba(239, 68, 68, 0.2); }
+        .feature-icon.auto { background: rgba(59, 130, 246, 0.2); }
+        .feature-icon.dashboard { background: rgba(16, 185, 129, 0.2); }
+        .feature-icon.multi { background: rgba(139, 92, 246, 0.2); }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 60px 40px;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .faq-question:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .faq-answer {
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        .faq-toggle {
+            transition: var(--transition);
+        }
+
+        .faq-item.open .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 40px 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .step {
+                flex-direction: column;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .step:nth-child(1) { animation-delay: 0.1s; }
+        .step:nth-child(2) { animation-delay: 0.2s; }
+        .step:nth-child(3) { animation-delay: 0.3s; }
+        .step:nth-child(4) { animation-delay: 0.4s; }
+        .step:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>🚀</span>
+                <span>دليل الإعداد الشامل</span>
+            </div>
+            <h1 class="hero-title">ابدأ مع Auto-Guardian</h1>
+            <p class="hero-subtitle">
+                نظام الفحص الأمني التلقائي للكود. اتبع الخطوات أدناه لتفعيل النظام بالكامل والحصول على لوحة تحكم تفاعلية تعرض حالة أمان مستودعك.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="scrollToSection('steps')">
+                    <span>📋</span>
+                    <span>بدء الإعداد</span>
+                </button>
+                <a href="index.html" class="btn btn-secondary">
+                    <span>🎨</span>
+                    <span>معاينة لوحة التحكم</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="progress-section" id="steps">
+        <div class="section-header">
+            <h2 class="section-title">خطوات الإعداد</h2>
+            <p class="section-subtitle">اتبع هذه الخطوات بالترتيب لتفعيل النظام على مستودعك</p>
+        </div>
+
+        <div class="steps-container">
+            <!-- Step 1 -->
+            <div class="step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">إنشاء المستودع أو نسخ القالب</h3>
+                    <p class="step-description">
+                        أولاً، تحتاج إلى إنشاء مستودع جديد. يمكنك استخدام هذا المشروع كقالب لإنشاء مستودع جديد، أو نسخ الملفات يدوياً إلى مستودع موجود.
+                    </p>
+                    <div class="step-checklist">
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>اذهب إلى <strong>GitHub</strong وسجل الدخول</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>زر <strong>Use this template</strong> لإنشاء مستودع جديد</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>أو انسخ الملفات يدوياً إذا كان لديك مستودع موجود</span>
+                        </li>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">رفع الملفات</h3>
+                    <p class="step-description">
+                        بعد إنشاء المستودع، تحتاج إلى رفع جميع الملفات. الهيكل التالي يجب أن يكون موجوداً في مستودعك:
+                    </p>
+                    <div class="step-files">
+                        <span class="file-tag">📁 .github/workflows/scan-and-deploy.yml</span>
+                        <span class="file-tag">📁 scripts/aggregate_results.py</span>
+                        <span class="file-tag">📁 scripts/generate_report.py</span>
+                        <span class="file-tag">📁 dashboard/public/data/latest.json</span>
+                        <span class="file-tag">📁 dashboard/index.html</span>
+                        <span class="file-tag">📄 README.md</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">تفعيل GitHub Pages</h3>
+                    <p class="step-description">
+                        الآن تحتاج إلى تفعيل GitHub Pages للسماح بنشر لوحة التحكم. اتبع الخطوات التالية:
+                    </p>
+                    <div class="step-checklist">
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>اذهب إلى <strong>Settings</strong> في مستودعك</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>انقر على <strong>Pages</strong> في القائمة الجانبية</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>في قسم <strong>Build and deployment</strong>:</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span><strong>Source:</strong> اختر <mark>GitHub Actions</mark></span>
+                        </li>
+                    </div>
+                    <div class="step-code">
+┌─────────────────────────────────────────────┐
+│  Build and deployment                        │
+│                                              │
+│  Source › GitHub Actions                     │
+└─────────────────────────────────────────────┘
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 class="step-title">تفعيل GitHub Actions</h3>
+                    <p class="step-description">
+                        الآن دعنا نتحقق من أن GitHub Actions يعمل. سير العمل سيبدأ تلقائياً عند دفع أي تغيير.
+                    </p>
+                    <div class="step-checklist">
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>اذهب إلى تبويب <strong>Actions</strong> في المستودع</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>ابحث عن <strong>Auto-Guardian Scan & Deploy</strong></span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>انقر على <strong>Enable workflow</strong> إذا كان معطلاً</span>
+                        </li>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step" id="step5">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3 class="step-title">اختبار النظام</h3>
+                    <p class="step-description">
+                        للاختبار، قم بدفع أي تغيير بسيط إلى المستودع. سير العمل سيبدأ تلقائياً وسيتم نشر لوحة التحكم بعد اكتمال الفحص.
+                    </p>
+                    <div class="step-checklist">
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>أنشئ ملفاً جديداً أو عدل ملفاً موجوداً</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>ادفع التغييرات: <code>git add . && git commit -m "test" && git push</code></span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>تحقق من تبويب <strong>Actions</strong> لرؤية تقدم الفحص</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>بعد اكتمال الفحص، اذهب إلى <strong>Settings > Pages</strong> للحصول على الرابط</span>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- File Structure Section -->
+    <section class="structure-section">
+        <div class="section-header">
+            <h2 class="section-title">هيكل الملفات</h2>
+            <p class="section-subtitle">تأكد من أن جميع الملفات موجودة في الأماكن الصحيحة</p>
+        </div>
+
+        <div class="tree-container">
+            <pre class="tree">
+<span class="tree-line"><span class="tree-folder">📁</span> auto-guardian/
+  <span class="tree-line">  📁 <span class="tree-folder">.github/</span>
+    <span class="tree-line">    📁 workflows/
+  <span class="tree-badge">NEW</span>      📄 scan-and-deploy.yml</span>
+  <span class="tree-line">  📁 <span class="tree-folder">dashboard/</span>
+  <span class="tree-line">    📄 index.html</span>
+  <span class="tree-line">    📁 <span class="tree-folder">public/</span>
+  <span class="tree-line">      📁 <span class="tree-folder">data/</span>
+  <span class="tree-line">        📄 latest.json</span>
+  <span class="tree-line">  📁 <span class="tree-folder">scripts/</span>
+  <span class="tree-badge">NEW</span>  📄 aggregate_results.py
+  <span class="tree-line">      📄 generate_report.py</span>
+  <span class="tree-line">  📄 README.md</span></pre>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2 class="section-title">مميزات النظام</h2>
+            <p class="section-subtitle">كل ما يقدمه لك نظام Auto-Guardian</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon security">🛡️</div>
+                <h3 class="feature-title">فحص أمني شامل</h3>
+                <p class="feature-description">
+                    يكتشف الثغرات الأمنية والأخطاء البرمجية باستخدام أدوات متخصصة لكل لغة برمجية.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon auto">⚡</div>
+                <h3 class="feature-title">فحص تلقائي</h3>
+                <p class="feature-description">
+                    يبدأ الفحص تلقائياً عند كل دفع للكود، ولا تحتاج لأي تدخل يدوي.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon dashboard">📊</div>
+                <h3 class="feature-title">لوحة تحكم تفاعلية</h3>
+                <p class="feature-description">
+                    واجهة جميلة وسهلة الاستخدام تعرض حالة الأمان بشكل واضح ومباشر.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon multi">🌐</div>
+                <h3 class="feature-title">دعم لغات متعددة</h3>
+                <p class="feature-description">
+                    يدعم Python وJavaScript وTypeScript وGo وRust وغيرها من اللغات.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="section-header">
+            <h2 class="section-title">الأسئلة الشائعة</h2>
+            <p class="section-subtitle">إجابات على الأسئلة المتكررة</p>
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>كم يستغرق الفحص؟</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    يعتمد وقت الفحص على حجم المشروع. للمشاريع الصغيرة (أقل من 100 ملف) يستغرق عادة من 2 إلى 5 دقائق. للمشاريع الكبيرة قد يستغرق حتى 15 دقيقة.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>هل يمكنني استخدام النظام في مستودع خاص؟</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    نعم، يمكنك استخدام النظام في المستودعات الخاصة. لكن إذا كنت تريد GitHub Pages عام، ستحتاج إلى خطة GitHub مدفوعة.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>ماذا يعني درجة الأمان؟</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    درجة الأمان هي رقم من 0 إلى 100. الدرجة A (90-100) تعني مستوى ممتاز، بينما F (أقل من 60) تعني وجود مشاكل حرجة تحتاج اهتماماً فورياً.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>هل يمكنني تخصيص أدوات الفحص؟</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    نعم، يمكنك تعديل ملف سير العمل لإضافة أو إزالة أدوات الفحص، أو تخصيص إعدادات كل أداة من خلال ملفات الإعدادات الخاصة بها.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            صنع بـ ❤️ بواسطة Auto-Guardian Team | 
+            <a href="#" style="color: var(--accent-blue);">التوثيق</a> | 
+            <a href="#" style="color: var(--accent-blue);">الإبلاغ عن مشكلة</a>
+        </p>
+    </footer>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(element) {
+            element.classList.toggle('open');
+        }
+
+        // Scroll to section
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Animate steps on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.step').forEach(step => {
+            observer.observe(step);
+        });
+
+        // Welcome message
+        console.log('%c مرحباً بك في Auto-Guardian! 🎉', 'font-size: 20px; font-weight: bold; color: #3b82f6;');
+        console.log('%c نظام الفحص الأمني التلقائي للكود', 'font-size: 14px; color: #64748b;');
+    </script>
+</body>
+</html>

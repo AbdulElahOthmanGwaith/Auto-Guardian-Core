@@ -1,0 +1,58 @@
+# ملف إعدادات Trivy لفحص الحاويات والتبعيات
+# Auto-Guardian System Configuration
+
+# إعدادات الفحص
+scan:
+  # أنواع الفحص المطلوبة
+  scanners:
+    - vuln
+    - secret
+    - config
+    - license
+
+  # مسارات الفحص
+  targets:
+    - filesystem
+    - repo
+
+# إعدادات الثغرات
+vulnerability:
+  # تصنيف الثغرات حسب الخطورة
+  severity:
+    - UNKNOWN
+    - LOW
+    - MEDIUM
+    - HIGH
+    - CRITICAL
+
+  # قائمة بالثغرات التي سيتم تجاهلها
+  ignore-unfixed: false
+
+  # تنسيق النتائج
+  format: json
+
+# إعدادات الأسرار
+secret:
+  # تفعيل فحوصات الأسرار
+  enable-full-scan: true
+
+  # قواعد مخصصة
+  rules:
+    - id: aws-access-token
+      category: secret
+      patterns:
+        - '(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'
+    - id: github-token
+      category: secret
+      patterns:
+        - '(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36}'
+
+# إعدادات التقارير
+report:
+  # حفظ التقارير
+  output: trivy-results.json
+
+# التخزين المؤقت
+cache:
+  enabled: true
+  dir: .trivy-cache/

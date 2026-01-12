@@ -1,0 +1,80 @@
+// Auto-Guardian System Architecture Diagram
+// Generated for Auto-Guardian Enhancement Project
+
+graph TD
+    subgraph User_Layer["طبقة المستخدم"]
+        User["المستخدمون والمطورون"]
+        Admin["المسؤولون"]
+    end
+
+    subgraph Gateway_Layer["طبقة البوابة"]
+        API["API Gateway"]
+        Auth["خدمة المصادقة"]
+    end
+
+    subgraph Core_Layer["طبقة المحرك الرئيسي"]
+        Analyzer["محلل الكود"]
+        Scanner["ماسح الأمان"]
+        Fixer["محرك الإصلاح التلقائي"]
+        Quality["بوابة الجودة"]
+    end
+
+    subgraph Agents_Layer["طبقة العملاء"]
+        Linters["أدوات التنسيق"]
+        Security["فحوصات الأمان"]
+        Tests["محركات الاختبار"]
+        TypeCheck["فحص الأنواع"]
+    end
+
+    subgraph Storage_Layer["طبقة التخزين"]
+        DB["قاعدة البيانات"]
+        Cache["التخزين المؤقت"]
+        Logs["سجلات النظام"]
+    end
+
+    subgraph Notification_Layer["طبقة التنبيهات"]
+        Alerts["نظام التنبيهات"]
+        Slack["Slack"]
+        Email["البريد الإلكتروني"]
+        Discord["Discord"]
+    end
+
+    %% Connections
+    User --> API
+    Admin --> API
+    API --> Auth
+    Auth --> Analyzer
+    Auth --> Scanner
+    
+    Analyzer --> Linters
+    Analyzer --> TypeCheck
+    Scanner --> Security
+    
+    Linters --> Quality
+    Security --> Quality
+    Tests --> Quality
+    TypeCheck --> Quality
+    
+    Analyzer --> DB
+    Scanner --> DB
+    Quality --> DB
+    
+    DB --> Cache
+    Quality --> Alerts
+    Alerts --> Slack
+    Alerts --> Email
+    Alerts --> Discord
+
+    %% Styling
+    classDef primary fill:#0F172A,stroke:#3B82F6,stroke-width:2px,color:#fff
+    classDef secondary fill:#3B82F6,stroke:#0F172A,stroke-width:2px,color:#fff
+    classDef accent fill:#10B981,stroke:#0F172A,stroke-width:2px,color:#fff
+    classDef alert fill:#EF4444,stroke:#0F172A,stroke-width:2px,color:#fff
+    classDef storage fill:#64748B,stroke:#0F172A,stroke-width:2px,color:#fff
+    
+    class User,Admin primary
+    class API,Auth secondary
+    class Analyzer,Scanner,Fixer,Quality secondary
+    class Linters,Security,Tests,TypeCheck accent
+    class DB,Cache,Logs storage
+    class Alerts,Slack,Email,Discord alert
