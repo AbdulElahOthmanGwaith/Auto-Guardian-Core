@@ -1,0 +1,307 @@
+# إعدادات استبعاد Git
+# Git Ignore Configuration for Auto Guardian System
+# ==================================================
+
+# ===============================
+# Python
+# ===============================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+coveragereport/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.env.local
+.env.*.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ===============================
+# IDEs and Editors
+# ===============================
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Vim
+[._]*.s[a-w][a-z]
+[._]swa
+*.un~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===============================
+# OS Files
+# ===============================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Linux
+.nfs*
+*~
+
+# Windows
+Thumbs.db:encryptable
+ehthumbs.db
+*.lnk
+
+# ===============================
+# Logs and Data
+# ===============================
+
+*.log
+logs/
+*.log.*
+*.sqlite3
+*.db
+*.sqlite3-journal
+
+# Session data
+*.session.vim
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+*~
+\#*\#
+._*
+
+# Backup files
+*.bak
+*.backup
+*~
+.*.swp
+*.swo
+
+# ===============================
+# Security
+# ===============================
+
+*.pem
+*.key
+*.crt
+*.pub
+!public.pem
+
+# SSH
+~/.ssh/id_rsa
+~/.ssh/id_rsa.pub
+~/.ssh/known_hosts
+
+# GPG
+~/.gnupg/
+
+# Secrets
+secrets.json
+credentials.json
+token.json
+
+# ===============================
+# Testing
+# ===============================
+
+.pytest_cache/
+.hypothesis/
+.coverage.*
+htmlcov/
+
+# Test data
+tests/data/*
+!tests/data/.gitkeep
+
+# ===============================
+# Build
+# ===============================
+
+build/
+dist/
+*.egg-info/
+*.whl
+*.pyz
+*.tar.gz
+
+# Docker
+.docker/
+
+# ===============================
+# Documentation
+# ===============================
+
+docs/_build/
+docs/.doctrees/
+
+# Translation
+locale/
+
+# ===============================
+# Temporary
+# ===============================
+
+.temp/
+tmp/
+temp/
+*.temp
+*.tmp
+
+# Cache
+.cache/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# ===============================
+# Third-party
+# ===============================
+
+node_modules/
+bower_components/

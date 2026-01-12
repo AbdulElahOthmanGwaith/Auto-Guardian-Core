@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="dashboardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1419;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1f26;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e2a35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#151c24;stop-opacity:1" />
+    </linearGradient>
+    <filter id="cardShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#dashboardBg)"/>
+  
+  <!-- Header -->
+  <g transform="translate(0, 0)">
+    <rect width="800" height="60" fill="#151c24"/>
+    <rect width="800" height="1" fill="#2d3a48"/>
+    
+    <!-- Logo -->
+    <g transform="translate(20, 12)">
+      <circle cx="18" cy="18" r="16" fill="#3b82f6" opacity="0.2"/>
+      <path d="M18,6 L26,14 L26,26 C26,32 18,38 18,38 C18,38 10,32 10,26 L10,14 Z" fill="#3b82f6"/>
+      <path d="M18,14 L22,18 L18,26 L14,18 Z" fill="#ffffff"/>
+    </g>
+    
+    <!-- Title -->
+    <text x="50" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">Auto Guardian</text>
+    <text x="180" y="35" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">| Security Dashboard</text>
+    
+    <!-- User info -->
+    <g transform="translate(700, 15)">
+      <circle cx="20" cy="15" r="15" fill="#3b82f6"/>
+      <text x="20" y="20" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle">A</text>
+    </g>
+  </g>
+  
+  <!-- Stats Cards Row -->
+  <g transform="translate(20, 80)">
+    <!-- Card 1 - Threats Blocked -->
+    <g transform="translate(0, 0)" filter="url(#cardShadow)">
+      <rect width="180" height="100" rx="8" fill="url(#cardGradient)"/>
+      <rect width="180" height="3" rx="1.5" fill="#ef4444"/>
+      <g transform="translate(15, 20)">
+        <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">التهديدات المحظورة</text>
+        <text x="0" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#ef4444">1,369</text>
+        <text x="0" y="70" font-family="Arial, sans-serif" font-size="11" fill="#10b981">+12 اليوم</text>
+      </g>
+      <g transform="translate(130, 25)">
+        <circle cx="25" cy="25" r="25" fill="#ef4444" opacity="0.2"/>
+        <text x="25" y="32" font-family="Arial, sans-serif" font-size="24" fill="#ef4444" text-anchor="middle">🛡️</text>
+      </g>
+    </g>
+    
+    <!-- Card 2 - Success Rate -->
+    <g transform="translate(200, 0)" filter="url(#cardShadow)">
+      <rect width="180" height="100" rx="8" fill="url(#cardGradient)"/>
+      <rect width="180" height="3" rx="1.5" fill="#10b981"/>
+      <g transform="translate(15, 20)">
+        <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">معدل النجاح</text>
+        <text x="0" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#10b981">99.9%</text>
+        <text x="0" y="70" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">آخر 30 يوم</text>
+      </g>
+      <g transform="translate(130, 25)">
+        <circle cx="25" cy="25" r="25" fill="#10b981" opacity="0.2"/>
+        <text x="25" y="32" font-family="Arial, sans-serif" font-size="24" fill="#10b981" text-anchor="middle">📊</text>
+      </g>
+    </g>
+    
+    <!-- Card 3 - Open Issues -->
+    <g transform="translate(400, 0)" filter="url(#cardShadow)">
+      <rect width="180" height="100" rx="8" fill="url(#cardGradient)"/>
+      <rect width="180" height="3" rx="1.5" fill="#f59e0b"/>
+      <g transform="translate(15, 20)">
+        <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">المشكلات المفتوحة</text>
+        <text x="0" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#f59e0b">12</text>
+        <text x="0" y="70" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">3 حرجة</text>
+      </g>
+      <g transform="translate(130, 25)">
+        <circle cx="25" cy="25" r="25" fill="#f59e0b" opacity="0.2"/>
+        <text x="25" y="32" font-family="Arial, sans-serif" font-size="24" fill="#f59e0b" text-anchor="middle">⚠️</text>
+      </g>
+    </g>
+    
+    <!-- Card 4 - Response Time -->
+    <g transform="translate(600, 0)" filter="url(#cardShadow)">
+      <rect width="180" height="100" rx="8" fill="url(#cardGradient)"/>
+      <rect width="180" height="3" rx="1.5" fill="#3b82f6"/>
+      <g transform="translate(15, 20)">
+        <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">زمن الاستجابة</text>
+        <text x="0" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#3b82f6">0.1s</text>
+        <text x="0" y="70" font-family="Arial, sans-serif" font-size="11" fill="#10b981">فوري</text>
+      </g>
+      <g transform="translate(130, 25)">
+        <circle cx="25" cy="25" r="25" fill="#3b82f6" opacity="0.2"/>
+        <text x="25" y="32" font-family="Arial, sans-serif" font-size="24" fill="#3b82f6" text-anchor="middle">⚡</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Charts Section -->
+  <g transform="translate(20, 200)">
+    <!-- Issues Distribution Chart -->
+    <g transform="translate(0, 0)" filter="url(#cardShadow)">
+      <rect width="380" height="250" rx="8" fill="url(#cardGradient)"/>
+      <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">توزيع المشكلات</text>
+      
+      <!-- Donut chart placeholder -->
+      <g transform="translate(140, 130)">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#ef4444" stroke-width="20" stroke-dasharray="40 125"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#f59e0b" stroke-width="20" stroke-dasharray="30 125" stroke-dashoffset="-40"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="20" stroke-dasharray="35 125" stroke-dashoffset="-70"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="20 125" stroke-dashoffset="-105"/>
+        <text x="60" y="55" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle">6</text>
+        <text x="60" y="75" font-family="Arial, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">مشكلة</text>
+      </g>
+      
+      <!-- Legend -->
+      <g transform="translate(250, 100)">
+        <g transform="translate(0, 0)">
+          <rect width="12" height="12" rx="2" fill="#ef4444"/>
+          <text x="20" y="10" font-family="Arial, sans-serif" font-size="11" fill="#d1d5db">حرجة</text>
+        </g>
+        <g transform="translate(0, 25)">
+          <rect width="12" height="12" rx="2" fill="#f59e0b"/>
+          <text x="20" y="10" font-family="Arial, sans-serif" font-size="11" fill="#d1d5db">عالية</text>
+        </g>
+        <g transform="translate(0, 50)">
+          <rect width="12" height="12" rx="2" fill="#3b82f6"/>
+          <text x="20" y="10" font-family="Arial, sans-serif" font-size="11" fill="#d1d5db">متوسطة</text>
+        </g>
+        <g transform="translate(0, 75)">
+          <rect width="12" height="12" rx="2" fill="#10b981"/>
+          <text x="20" y="10" font-family="Arial, sans-serif" font-size="11" fill="#d1d5db">منخفضة</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Activity Chart -->
+    <g transform="translate(400, 0)" filter="url(#cardShadow)">
+      <rect width="380" height="250" rx="8" fill="url(#cardGradient)"/>
+      <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">نشاط الفحص والأمان</text>
+      
+      <!-- Chart area -->
+      <g transform="translate(20, 50)">
+        <!-- Grid lines -->
+        <g stroke="#374151" stroke-width="1">
+          <line x1="0" y1="0" x2="340" y2="0"/>
+          <line x1="0" y1="50" x2="340" y2="50"/>
+          <line x1="0" y1="100" x2="340" y2="100"/>
+          <line x1="0" y1="150" x2="340" y2="150"/>
+        </g>
+        
+        <!-- Activity line -->
+        <polyline points="0,120 30,100 60,110 90,70 120,90 150,60 180,80 210,50 240,40 270,60 300,30 340,45" 
+                  fill="none" stroke="#3b82f6" stroke-width="3"/>
+        
+        <!-- Area under line -->
+        <polygon points="0,120 30,100 60,110 90,70 120,90 150,60 180,80 210,50 240,40 270,60 300,30 340,45 340,180 0,180" 
+                 fill="#3b82f6" opacity="0.2"/>
+        
+        <!-- Data points -->
+        <g fill="#3b82f6">
+          <circle cx="0" cy="120" r="4"/>
+          <circle cx="30" cy="100" r="4"/>
+          <circle cx="60" cy="110" r="4"/>
+          <circle cx="90" cy="70" r="4"/>
+          <circle cx="120" cy="90" r="4"/>
+          <circle cx="150" cy="60" r="4"/>
+          <circle cx="180" cy="80" r="4"/>
+          <circle cx="210" cy="50" r="4"/>
+          <circle cx="240" cy="40" r="4"/>
+          <circle cx="270" cy="60" r="4"/>
+          <circle cx="300" cy="30" r="4"/>
+          <circle cx="340" cy="45" r="4"/>
+        </g>
+      </g>
+      
+      <!-- Filter buttons -->
+      <g transform="translate(200, 215)">
+        <rect x="0" y="0" width="50" height="24" rx="4" fill="#3b82f6"/>
+        <text x="25" y="16" font-family="Arial, sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">24 ساعة</text>
+        <rect x="60" y="0" width="50" height="24" rx="4" fill="#1e2a35"/>
+        <text x="85" y="16" font-family="Arial, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">أسبوع</text>
+        <rect x="120" y="0" width="50" height="24" rx="4" fill="#1e2a35"/>
+        <text x="145" y="16" font-family="Arial, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">شهر</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Recent Issues Table -->
+  <g transform="translate(20, 470)">
+    <rect width="760" height="110" rx="8" fill="url(#cardGradient)"/>
+    <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">أحدث المشكلات</text>
+    
+    <!-- Table header -->
+    <g transform="translate(20, 50)">
+      <rect x="0" y="0" width="720" height="30" rx="4" fill="#1e2a35"/>
+      <text x="15" y="20" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">المشكلة</text>
+      <text x="300" y="20" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">الخطورة</text>
+      <text x="400" y="20" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">الحالة</text>
+      <text x="500" y="20" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">الوقت</text>
+      <text x="620" y="20" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">الإجراء</text>
+    </g>
+    
+    <!-- Row 1 -->
+    <g transform="translate(20, 85)">
+      <rect x="0" y="0" width="720" height="30" rx="4" fill="#1e2a35"/>
+      <text x="15" y="20" font-family="Arial, sans-serif" font-size="11" fill="#d1d5db">ثغرة أمنية في وحدة المصادقة</text>
+      <g transform="translate(300, 8)">
+        <rect x="0" y="0" width="50" height="16" rx="4" fill="#ef4444" opacity="0.2"/>
+        <text x="25" y="12" font-family="Arial, sans-serif" font-size="9" fill="#ef4444" text-anchor="middle">حرجة</text>
+      </g>
+      <g transform="translate(400, 8)">
+        <rect x="0" y="0" width="60" height="16" rx="4" fill="#f59e0b" opacity="0.2"/>
+        <text x="30" y="12" font-family="Arial, sans-serif" font-size="9" fill="#f59e0b" text-anchor="middle">قيد المعالجة</text>
+      </g>
+      <text x="500" y="20" font-family="Arial, sans-serif" font-size="10" fill="#6b7280">منذ 5 دقائق</text>
+      <rect x="620" y="5" width="60" height="20" rx="4" fill="#3b82f6"/>
+      <text x="650" y="18" font-family="Arial, sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">عرض</text>
+    </g>
+  </g>
+</svg>

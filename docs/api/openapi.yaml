@@ -1,0 +1,633 @@
+# توثيق واجهة برمجة التطبيقات (API)
+# API Documentation for Auto Guardian System
+# ==========================================
+
+openapi: 3.0.3
+info:
+  title: "نظام الحارس التلقائي - واجهة برمجة التطبيقات"
+  description: |
+    واجهة برمجة تطبيقات نظام الحارس التلقائي للمراقبة الأمنية وإدارة التهديدات.
+    
+    ## نظرة عامة
+    
+    توفر هذه الواجهة مجموعة من النقاط الطرفية للتحقق من حالة النظام، وإدارة التهديدات المحظورة، وإرسال التنبيهات، ومراقبة الأداء.
+    
+    ## المصادقة
+    
+    تستخدم الواجهة مصادقة JWT. للحصول على رمز الوصول، استخدم نقطة نهاية `/api/v1/auth/token`.
+    
+    ## الإصدار
+    
+    - **الإصدار الحالي:** 1.3.0
+    - **آخر تحديث:** 2024-10-13
+    
+    ## الدعم
+    
+    للمشاكل والاستفسارات: support@autoguardian.local
+  version: "1.3.0"
+  contact:
+    name: "الدعم الفني"
+    email: "support@autoguardian.local"
+    url: "https://github.com/AbdulElahOthmanGwaith/auto-guardian-system"
+  license:
+    name: "MIT License"
+    url: "https://opensource.org/licenses/MIT"
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: "خادم التطوير المحلي"
+  - url: https://api.autoguardian.local/api/v1
+    description: "خادم الإنتاج"
+
+tags:
+  - name: "الصحة"
+    description: "نقاط نهاية فحص حالة النظام"
+  - name: "التهديدات"
+    description: "إدارة التهديدات الأمنية"
+  - name: "العناوكات المحظورة"
+    description: "إدارة العناوكات المحظورة"
+  - name: "التنبيهات"
+    description: "إدارة التنبيهات والإشعارات"
+  - name: "المراقبة"
+    description: "مراقبة الأداء والإحصائيات"
+  - name: "المصادقة"
+    description: "المصادقة وإدارة الرموز"
+
+paths:
+  # ========================================
+  # قسم الصحة
+  # ========================================
+  
+  /health:
+    get:
+      tags:
+        - "الصحة"
+      summary: "فحص حالة النظام"
+      description: "إرجاع حالة النظام العامة ومعلومات الإصدار"
+      operationId: "getHealth"
+      responses:
+        "200":
+          description: "النظام يعمل بشكل صحيح"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: "healthy"
+                version: "1.3.0"
+                uptime: "2d 5h 30m"
+                timestamp: "2024-10-13T10:30:00Z"
+        "503":
+          description: "النظام لا يعمل بشكل صحيح"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: "unhealthy"
+                version: "1.3.0"
+                error: "Database connection failed"
+
+  /health/detailed:
+    get:
+      tags:
+        - "الصحة"
+      summary: "فحص تفصيلي للحالة"
+      description: "إرجاع حالة مفصلة لجميع مكونات النظام"
+      operationId: "getDetailedHealth"
+      responses:
+        "200":
+          description: "حالة تفصيلية للنظام"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                  components:
+                    type: "object"
+                    properties:
+                      database:
+                        type: "object"
+                        properties:
+                          status:
+                            type: "string"
+                          latency_ms:
+                            type: "number"
+                      monitoring:
+                        type: "object"
+                        properties:
+                          status:
+                            type: "string"
+                          active_sources:
+                            type: "integer"
+                      notifications:
+                        type: "object"
+                        properties:
+                          status:
+                            type: "string"
+                          channels:
+                            type: "array"
+                            items:
+                              type: "string"
+                  timestamp:
+                    type: "string"
+                    format: "date-time"
+
+  # ========================================
+  # قسم التهديدات
+  # ========================================
+  
+  /threats:
+    get:
+      tags:
+        - "التهديدات"
+      summary: "قائمة التهديدات"
+      description: "استرجاع قائمة التهديدات المكتشفة مع إمكانية التصفية"
+      operationId: "listThreats"
+      parameters:
+        - name: "status"
+          in: "query"
+          schema:
+            type: "string"
+            enum: [blocked, active, ignored, all]
+          description: "تصفية حسب الحالة"
+        - name: "severity"
+          in: "query"
+          schema:
+            type: "string"
+            enum: [critical, high, medium, low, all]
+          description: "تصفية حسب الخطورة"
+        - name: "limit"
+          in: "query"
+          schema:
+            type: "integer"
+            default: 50
+            maximum: 100
+          description: "عدد النتائج المطلوبة"
+        - name: "offset"
+          in: "query"
+          schema:
+            type: "integer"
+            default: 0
+          description: "رقم البداية"
+      responses:
+        "200":
+          description: "قائمة التهديدات"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  total:
+                    type: "integer"
+                  limit:
+                    type: "integer"
+                  offset:
+                    type: "integer"
+                  threats:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Threat"
+        "400":
+          description: "طلب غير صالح"
+    
+    post:
+      tags:
+        - "التهديدات"
+      summary: "إضافة تهديد يدوي"
+      description: "إضافة تهديد جديد يدوياً إلى النظام"
+      operationId: "createThreat"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ThreatCreate"
+      responses:
+        "201":
+          description: "تم إنشاء التهديد بنجاح"
+        "400":
+          description: "بيانات غير صالحة"
+
+  /threats/{threat_id}:
+    get:
+      tags:
+        - "التهديدات"
+      summary: "تفاصيل تهديد"
+      description: "استرجاع تفاصيل تهديد محدد"
+      operationId: "getThreat"
+      parameters:
+        - name: "threat_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "تفاصيل التهديد"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Threat"
+        "404":
+          description: "التهديد غير موجود"
+    
+    delete:
+      tags:
+        - "التهديدات"
+      summary: "حذف تهديد"
+      description: "حذف تهديد محدد"
+      operationId: "deleteThreat"
+      parameters:
+        - name: "threat_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204":
+          description: "تم حذف التهديد بنجاح"
+        "404":
+          description: "التهديد غير موجود"
+
+  # ========================================
+  # قسم العناوكات المحظورة
+  # ========================================
+  
+  /blocked-ips:
+    get:
+      tags:
+        - "العناوكات المحظورة"
+      summary: "قائمة العناوكات المحظورة"
+      description: "استرجاع قائمة العناوكات المحظورة"
+      operationId: "listBlockedIPs"
+      parameters:
+        - name: "active"
+          in: "query"
+          schema:
+            type: "boolean"
+          description: "تصفية للعناوكات النشطة فقط"
+        - name: "limit"
+          in: "query"
+          schema:
+            type: "integer"
+            default: 50
+      responses:
+        "200":
+          description: "قائمة العناوكات المحظورة"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  total:
+                    type: "integer"
+                  blocked_ips:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/BlockedIP"
+    
+    post:
+      tags:
+        - "العناوكات المحظورة"
+      summary: "حظر عنوان"
+      description: "حظر عنوان IP جديد"
+      operationId: "blockIP"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "ip"
+                - "reason"
+              properties:
+                ip:
+                  type: "string"
+                  format: "ipv4"
+                  example: "192.168.1.100"
+                reason:
+                  type: "string"
+                  example: "Brute force attack detected"
+                duration:
+                  type: "integer"
+                  description: "مدة الحظر بالدقائق (0 = دائم)"
+                  default: 0
+      responses:
+        "201":
+          description: "تم حظر العنوان بنجاح"
+        "400":
+          description: "بيانات غير صالحة"
+
+  /blocked-ips/{ip}:
+    delete:
+      tags:
+        - "العناوكات المحظورة"
+      summary: "إلغاء حظر عنوان"
+      description: "إلغاء حظر عنوان IP محدد"
+      operationId: "unblockIP"
+      parameters:
+        - name: "ip"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204":
+          description: "تم إلغاء الحظر بنجاح"
+        "404":
+          description: "العنوان غير موجود"
+
+  # ========================================
+  # قسم التنبيهات
+  # ========================================
+  
+  /alerts:
+    get:
+      tags:
+        - "التنبيهات"
+      summary: "قائمة التنبيهات"
+      description: "استرجاع قائمة التنبيهات المرسلة"
+      operationId: "listAlerts"
+      parameters:
+        - name: "read"
+          in: "query"
+          schema:
+            type: "boolean"
+          description: "تصفية للرسائل المقروءة/غير المقروءة"
+        - name: "limit"
+          in: "query"
+          schema:
+            type: "integer"
+            default: 50
+      responses:
+        "200":
+          description: "قائمة التنبيهات"
+
+    post:
+      tags:
+        - "التنبيهات"
+      summary: "إرسال تنبيه"
+      description: "إرسال تنبيه يدوي عبر جميع القنوات المفعلة"
+      operationId: "sendAlert"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "title"
+                - "message"
+                - "severity"
+              properties:
+                title:
+                  type: "string"
+                  example: "تهديد أمني جديد"
+                message:
+                  type: "string"
+                  example: "اكتشاف محاولة اختراق"
+                severity:
+                  type: "string"
+                  enum: [critical, high, medium, low]
+                channels:
+                  type: "array"
+                  items:
+                    type: "string"
+                    enum: [slack, discord, email]
+      responses:
+        "202":
+          description: "تم قبول طلب الإرسال"
+        "400":
+          description: "بيانات غير صالحة"
+
+  /alerts/stats:
+    get:
+      tags:
+        - "التنبيهات"
+      summary: "إحصائيات التنبيهات"
+      description: "استرجاع إحصائيات التنبيهات"
+      operationId: "getAlertStats"
+      responses:
+        "200":
+          description: "إحصائيات التنبيهات"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  total_sent:
+                    type: "integer"
+                  by_channel:
+                    type: "object"
+                  by_severity:
+                    type: "object"
+
+  # ========================================
+  # قسم المراقبة
+  # ========================================
+  
+  /monitoring/stats:
+    get:
+      tags:
+        - "المراقبة"
+      summary: "إحصائيات المراقبة"
+      description: "استرجاع إحصائيات المراقبة والأمان"
+      operationId: "getMonitoringStats"
+      responses:
+        "200":
+          description: "إحصائيات المراقبة"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonitoringStats"
+
+  /monitoring/logs:
+    get:
+      tags:
+        - "المراقبة"
+      summary: "سجلات النظام"
+      description: "استرجاع سجلات النظام"
+      operationId: "getSystemLogs"
+      parameters:
+        - name: "level"
+          in: "query"
+          schema:
+            type: "string"
+            enum: [DEBUG, INFO, WARNING, ERROR]
+        - name: "limit"
+          in: "query"
+          schema:
+            type: "integer"
+            default: 100
+      responses:
+        "200":
+          description: "سجلات النظام"
+
+  # ========================================
+  # قسم المصادقة
+  # ========================================
+  
+  /auth/token:
+    post:
+      tags:
+        - "المصادقة"
+      summary: "الحصول على رمز الوصول"
+      description: "الحصول على رمز JWT للوصول إلى API"
+      operationId: "getToken"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "username"
+                - "password"
+              properties:
+                username:
+                  type: "string"
+                password:
+                  type: "string"
+                  format: "password"
+      responses:
+        "200":
+          description: "رمز الوصول"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  access_token:
+                    type: "string"
+                  token_type:
+                    type: "string"
+                    example: "bearer"
+                  expires_in:
+                    type: "integer"
+        "401":
+          description: "بيانات اعتماد غير صالحة"
+
+# ========================================
+# المخططات (Schemas)
+# ========================================
+
+components:
+  schemas:
+    HealthResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          enum: [healthy, unhealthy, degraded]
+          example: "healthy"
+        version:
+          type: "string"
+          example: "1.3.0"
+        uptime:
+          type: "string"
+          example: "2d 5h 30m"
+        timestamp:
+          type: "string"
+          format: "date-time"
+          example: "2024-10-13T10:30:00Z"
+        error:
+          type: "string"
+          description: "رسالة الخطأ إن وجد"
+
+    Threat:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        type:
+          type: "string"
+          example: "brute_force"
+        source_ip:
+          type: "string"
+          format: "ipv4"
+        target_port:
+          type: "integer"
+        severity:
+          type: "string"
+          enum: [critical, high, medium, low]
+        status:
+          type: "string"
+          enum: [blocked, active, ignored]
+        timestamp:
+          type: "string"
+          format: "date-time"
+        details:
+          type: "string"
+        actions:
+          type: "array"
+          items:
+            type: "string"
+
+    ThreatCreate:
+      type: "object"
+      required:
+        - "type"
+        - "source_ip"
+        - "severity"
+        - "details"
+      properties:
+        type:
+          type: "string"
+        source_ip:
+          type: "string"
+          format: "ipv4"
+        target_port:
+          type: "integer"
+        severity:
+          type: "string"
+          enum: [critical, high, medium, low]
+        details:
+          type: "string"
+
+    BlockedIP:
+      type: "object"
+      properties:
+        ip:
+          type: "string"
+          format: "ipv4"
+        reason:
+          type: "string"
+        blocked_at:
+          type: "string"
+          format: "date-time"
+        expires_at:
+          type: "string"
+          format: "date-time"
+        active:
+          type: "boolean"
+        block_count:
+          type: "integer"
+
+    MonitoringStats:
+      type: "object"
+      properties:
+        threats_blocked:
+          type: "integer"
+          example: 1369
+        success_rate:
+          type: "number"
+          format: "float"
+          example: 99.9
+        open_issues:
+          type: "integer"
+          example: 12
+        response_time_ms:
+          type: "number"
+          format: "float"
+          example: 100.0
+
+  securitySchemes:
+    bearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"

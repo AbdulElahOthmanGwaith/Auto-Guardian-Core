@@ -1,0 +1,234 @@
+version: '3.8'
+
+services:
+  # ========================================
+  # خدمة نظام الحارس التلقائي الرئيسية
+  # ========================================
+  auto-guardian:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auto-guardian-system
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      # مجلد السجلات
+      - ./logs:/app/logs:rw
+      
+      # مجلد الإعدادات
+      - ./config:/app/config:rw
+      
+      # قراءة سجلات النظام (للمراقبة)
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/syslog:/var/log/syslog:ro
+      - /var/log/nginx/access.log:/var/log/nginx/access.log:ro
+      
+      # حالة IPTables (للتشغيل المحلي)
+      - /lib/modules:/lib/modules:ro
+    
+    environment:
+      # إعدادات البيئة
+      - TZ=UTC
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      
+      # إعدادات التطبيق
+      - AG_MODE=docker
+      - AG_CONFIG_PATH=/app/config/settings.yaml
+      - AG_LOG_PATH=/app/logs
+      
+      # إعدادات API
+      - AG_API_HOST=0.0.0.0
+      - AG_API_PORT=8000
+      
+      # إعدادات الإشعارات
+      - AG_NOTIFICATIONS_ENABLED=true
+      - AG_SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+      - AG_DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+    
+    networks:
+      - security-network
+    ports:
+      - "8000:8000"
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    labels:
+      - "com.autoguardian.version=1.3.0"
+      - "com.autoguardian.service=auto-guardian"
+    
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # ========================================
+  # خدمة Prometheus للمراقبة
+  # ========================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    networks:
+      - security-network
+    ports:
+      - "9090:9090"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.autoguardian.service=prometheus"
+
+  # ========================================
+  # خدمة Grafana للوحات المراقبة
+  # ========================================
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      # إعدادات Grafana
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-autoguardian}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      
+      # إعدادات SMTP (لإرسال التنبيهات)
+      - GF_SMTP_ENABLED=${GRAFANA_SMTP_ENABLED:-false}
+      - GF_SMTP_HOST=${GRAFANA_SMTP_HOST:-}
+      - GF_SMTP_USER=${GRAFANA_SMTP_USER:-}
+      - GF_SMTP_PASSWORD=${GRAFANA_SMTP_PASSWORD:-}
+    
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    
+    networks:
+      - security-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.autoguardian.service=grafana"
+    
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ========================================
+  # خدمة التنبيهات (قائمة الانتظار)
+  # ========================================
+  alerts-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alerts-worker
+    restart: unless-stopped
+    command: ["python", "-m", "src.notifiers.worker"]
+    volumes:
+      - ./logs:/app/logs:rw
+      - ./config:/app/config:rw
+    environment:
+      - TZ=UTC
+      - PYTHONUNBUFFERED=1
+      - AG_MODE=worker
+      - AG_CONFIG_PATH=/app/config/settings.yaml
+      - AG_REDIS_URL=redis://redis:6379/0
+    networks:
+      - security-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - production
+
+  # ========================================
+  # خدمة Redis للتخزين المؤقت والرسائل
+  # ========================================
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - security-network
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "com.autoguardian.service=redis"
+
+  # ========================================
+  # خدمة Nginx كوكيل عكسي (اختياري)
+  # ========================================
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+    networks:
+      - security-network
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - auto-guardian
+      - grafana
+    profiles:
+      - production
+
+# ========================================
+# تعريف الشبكات
+# ========================================
+networks:
+  security-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+# ========================================
+# تعريف المجلدات المستمرة
+# ========================================
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  redis-data:
+    driver: local
