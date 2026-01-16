@@ -50,9 +50,13 @@ Auto-Guardian-Core/
 ├── 📄 docker-compose.yml        # إعدادات Docker
 ├── 📄 requirements.txt          # متطلبات Python
 ├── 📂 scripts/                  # سكربتات الإدارة والفحص
+│   ├── 📄 security_scanner.py   # فحص أمني متقدم (جديد)
 │   ├── 📄 backup.sh             # النسخ الاحتياطي
 │   ├── 📄 maintenance.sh        # الصيانة
 │   └── 📄 upgrade.sh            # الترقية
+├── 📄 robots.txt                # ملفات SEO لمحركات البحث
+├── 📄 sitemap.xml               # خريطة الموقع لمحركات البحث
+├── 📄 structured-data.json      # البيانات المنظمة (JSON-LD)
 ├── 📂 docs/                     # التوثيق التقني
 │   ├── 📂 api/                  # توثيق OpenAPI
 │   └── 📄 configuration.md      # إعدادات النظام
