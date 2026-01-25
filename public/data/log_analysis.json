@@ -1,0 +1,14 @@
+{
+    "total_entries": 1542,
+    "errors": 12,
+    "warnings": 45,
+    "suspicious_activities": [
+        {
+            "timestamp": "15:17:26",
+            "type": "Multiple Auth Failures",
+            "source_ip": "192.168.1.105",
+            "severity": "high"
+        }
+    ],
+    "last_analysis": "2026-01-25 15:17:26"
+}

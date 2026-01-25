@@ -1373,9 +1373,10 @@
             email: '',
             language: 'ar',
             theme: 'light',
+            email: 'fcab8090@gmail.com',
             autoScan: true,
             criticalAlerts: true,
-            autoFix: true
+            autoFix: false
         };
         
         // Sample Data
@@ -1457,8 +1458,8 @@
             }
             
             // Update UI
-            document.getElementById('settingUsername').value = settings.username || '';
-            document.getElementById('settingEmail').value = settings.email || '';
+            document.getElementById('settingUsername').value = settings.username || 'Admin';
+            document.getElementById('settingEmail').value = settings.email || 'fcab8090@gmail.com';
             document.getElementById('settingLanguage').value = settings.language || 'ar';
             document.getElementById('settingTheme').value = settings.theme || 'light';
             updateToggle('toggleAutoScan', settings.autoScan);

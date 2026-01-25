@@ -220,7 +220,7 @@ notifications:
   
   # ---- البريد الإلكتروني ----
   email:
-    enabled: false
+    enabled: true
     smtp_host: "smtp.gmail.com"
     smtp_port: 587
     use_tls: true
@@ -228,7 +228,7 @@ notifications:
     password: ""
     from_address: "noreply@autoguardian.local"
     to_addresses:
-      - "admin@example.com"
+      - "fcab8090@gmail.com"
   
   # ---- عام ----
   # تفعيل الإشعارات للتهديدات الحرجة فقط
