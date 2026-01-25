@@ -1,0 +1,12 @@
+title: Auto-Guardian Core
+description: Automated security monitoring and protection core system.
+baseurl: "/Auto-Guardian-Core"
+url: "https://abdulelahothmangwaith.github.io"
+
+# Security Headers (Note: GitHub Pages doesn't support custom headers via _config.yml, 
+# but this is good practice for documentation and local testing)
+defaults:
+  - scope:
+      path: ""
+    values:
+      strict_transport_security: "max-age=31536000; includeSubDomains; preload"
