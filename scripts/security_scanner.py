@@ -10,6 +10,8 @@ class SecurityScanner:
             "scan_time": str(datetime.datetime.now()),
             "vulnerabilities": [],
             "summary": {"high": 0, "medium": 0, "low": 0},
+            "risk_score": 100,
+            "health_status": "Excellent",
             "recommendations": []
         }
         # أنماط البحث المتقدمة
@@ -43,7 +45,6 @@ class SecurityScanner:
     def scan_files(self):
         print(f"Starting advanced security scan on: {self.target_dir}")
         for root, dirs, files in os.walk(self.target_dir):
-            # تخطي المجلدات غير الضرورية
             if any(ignored in root for ignored in ['.git', '__pycache__', 'node_modules', 'venv']):
                 continue
                 
@@ -51,8 +52,30 @@ class SecurityScanner:
                 if file.endswith(('.py', '.js', '.html', '.env', '.yml', '.yaml')):
                     self._check_file(os.path.join(root, file))
         
+        self._calculate_risk_score()
         self._generate_recommendations()
         self._save_results()
+
+    def _calculate_risk_score(self):
+        # حساب نقاط المخاطر (تبدأ من 100 وتنقص بناءً على الثغرات)
+        deductions = {
+            "high": 15,
+            "medium": 5,
+            "low": 2
+        }
+        
+        total_deduction = (self.results["summary"]["high"] * deductions["high"] +
+                           self.results["summary"]["medium"] * deductions["medium"] +
+                           self.results["summary"]["low"] * deductions["low"])
+        
+        self.results["risk_score"] = max(0, 100 - total_deduction)
+        
+        if self.results["risk_score"] > 80:
+            self.results["health_status"] = "ممتاز"
+        elif self.results["risk_score"] > 50:
+            self.results["health_status"] = "جيد"
+        else:
+            self.results["health_status"] = "خطر"
 
     def _check_file(self, file_path):
         try:

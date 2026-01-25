@@ -398,9 +398,14 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
+        }
+        
+        .stat-card.risk-card {
+            border: 2px solid var(--danger);
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(239, 68, 68, 0.05) 100%);
         }
         
         .stat-card {
@@ -1092,6 +1097,19 @@
             
             <!-- Stats Grid -->
             <div class="stats-grid">
+                <div class="stat-card risk-card" id="riskCard">
+                    <div class="stat-header">
+                        <div class="stat-icon red">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <span class="stat-trend" id="healthStatus">جاري التحليل...</span>
+                    </div>
+                    <div class="stat-value" id="riskScore">--</div>
+                    <div class="stat-label">مؤشر المخاطر (Risk Score)</div>
+                </div>
+                
                 <div class="stat-card" onclick="filterIssues('critical')">
                     <div class="stat-header">
                         <div class="stat-icon blue">
@@ -1476,13 +1494,34 @@
             updateToggle('toggle' + setting.charAt(0).toUpperCase() + setting.slice(1), settings[setting]);
             showToast(`⚙️ تم ${settings[setting] ? 'تفعيل' : 'تعطيل'} ${setting}`, 'info');
         }
-        
-        // Load Data
-        function loadData() {
+               // Load Data
+        async function loadData() {
+            try {
+                // محاولة جلب بيانات الفحص الأمني الحقيقية
+                const response = await fetch('public/data/security_scan_latest.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('riskScore').textContent = data.risk_score;
+                    document.getElementById('healthStatus').textContent = data.health_status;
+                    
+                    // تحديث لون بطاقة المخاطر بناءً على النتيجة
+                    const riskCard = document.getElementById('riskCard');
+                    if (data.risk_score > 80) {
+                        riskCard.style.borderColor = 'var(--success)';
+                    } else if (data.risk_score > 50) {
+                        riskCard.style.borderColor = 'var(--warning)';
+                    } else {
+                        riskCard.style.borderColor = 'var(--danger)';
+                    }
+                }
+            } catch (e) {
+                console.log("Using sample data as fallback");
+            }
+            
             currentData.issues = sampleIssues;
             currentData.repos = sampleRepos;
-            
-            // Randomize some values
+            updateStatsUI();
+        }e some values
             currentData.threats = Math.floor(Math.random() * 2000) + 500;
             currentData.openIssues = Math.floor(Math.random() * 30) + 10;
             currentData.responseTime = (Math.random() * 0.5 + 0.1).toFixed(1);

@@ -1,23 +1,23 @@
 {
-    "scan_time": "2026-01-25 15:11:29.579255",
+    "scan_time": "2026-01-25 15:15:03.536854",
     "vulnerabilities": [
         {
             "file": "scripts/security_scanner.py",
-            "line": 26,
+            "line": 28,
             "issue": "insecure_eval",
             "severity": "high",
             "description": "استخدام دالة eval() غير الآمنة."
         },
         {
             "file": "scripts/security_scanner.py",
-            "line": 27,
+            "line": 29,
             "issue": "insecure_eval",
             "severity": "high",
             "description": "استخدام دالة eval() غير الآمنة."
         },
         {
             "file": "scripts/security_scanner.py",
-            "line": 27,
+            "line": 29,
             "issue": "insecure_eval",
             "severity": "high",
             "description": "استخدام دالة eval() غير الآمنة."
@@ -28,6 +28,8 @@
         "medium": 0,
         "low": 0
     },
+    "risk_score": 55,
+    "health_status": "جيد",
     "recommendations": [
         {
             "issue": "insecure_eval",
