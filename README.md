@@ -11,6 +11,14 @@
 ![API Server](https://img.shields.io/badge/API_Server-RESTful-blue?style=for-the-badge)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-Integrated-purple?style=for-the-badge)
 
+[![GitHub Release](https://img.shields.io/github/v/release/AbdulElahOthmanGwaith/Auto-Guardian-Core?style=flat-square&logo=github&label=Latest%20Release)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/AbdulElahOthmanGwaith/Auto-Guardian-Core?style=flat-square&logo=github&label=Stars)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/AbdulElahOthmanGwaith/Auto-Guardian-Core?style=flat-square&logo=github&label=Forks)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/AbdulElahOthmanGwaith/Auto-Guardian-Core?style=flat-square&logo=github&label=Issues)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core/issues)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/AbdulElahOthmanGwaith/Auto-Guardian-Core/ci-cd.yml?style=flat-square&logo=github-actions&label=Build)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core/actions)
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-A-brightgreen?style=flat-square)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core)
+[![Security](https://img.shields.io/badge/Security-Verified-blue?style=flat-square)](https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core/security)
+
 **نظام متكامل لفحص الكود البرمائي وكشف الثغرات الأمنية بشكل تلقائي**
 
 *Automated Code Security Scanning and Vulnerability Detection System*
