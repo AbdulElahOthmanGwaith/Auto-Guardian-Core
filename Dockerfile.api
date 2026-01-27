@@ -1,0 +1,35 @@
+FROM python:3.11-slim
+
+# الإصدار: 2.0.0
+# تاريخ البناء: 2024-01-28
+
+# تعيين متغيرات البيئة
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV SCAN_TARGET=/app
+
+# إنشاء مجلد العمل
+WORKDIR /app
+
+# تثبيت التبعيات
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# نسخ ملفات المشروع
+COPY . .
+
+# إنشاء مجلد للنتائج
+RUN mkdir -p /app/public/data /app/dashboard/public/data
+
+# تعيين الأذونات
+RUN chmod +x scripts/*.py
+
+# تحديد المستخدم غير الجذري
+RUN groupadd -r auto-guardian && useradd -r -g auto-guardian auto-guardian
+USER auto-guardian
+
+# المنافذ المعرضة
+EXPOSE 8000
+
+# الأمر الافتراضي
+CMD ["python", "scripts/api_server.py"]

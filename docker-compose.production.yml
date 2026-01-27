@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  # خدمة الماسح الأمني الرئيسي
+  security-scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile.scanner
+    container_name: auto-guardian-scanner
+    working_dir: /app
+    volumes:
+      - ./:/app:rw
+      - scan_results:/app/public/data
+    environment:
+      - SCAN_TARGET=/app
+      - SEVERITY_THRESHOLD=medium
+      - OUTPUT_FORMAT=json
+    command: python scripts/enhanced_security_scanner.py /app
+    networks:
+      - auto-guardian-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; exit(0 if os.path.exists('/app/public/data') else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # خدمة خادم API
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: auto-guardian-api
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app:rw
+      - scan_results:/app/public/data
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    command: python scripts/api_server.py
+    networks:
+      - auto-guardian-network
+    depends_on:
+      - security-scanner
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # خدمة لوحة التحكم
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: auto-guardian-dashboard
+    working_dir: /app
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/app:rw
+      - scan_results:/app/public/data
+    environment:
+      - API_URL=http://api-server:8000
+    networks:
+      - auto-guardian-network
+    depends_on:
+      - api-server
+    restart: unless-stopped
+
+  # خدمة Prometheus للمonitoring
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: auto-guardian-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - auto-guardian-network
+    restart: unless-stopped
+
+  # خدمة Grafana للvisualization
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: auto-guardian-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=auto-guardian-secure
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - auto-guardian-network
+    restart: unless-stopped
+
+  # خدمة الإشعارات
+  notifications:
+    build:
+      context: .
+      dockerfile: Dockerfile.notifications
+    container_name: auto-guardian-notifications
+    working_dir: /app
+    volumes:
+      - ./:/app:rw
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+    command: python scripts/notification_service.py
+    networks:
+      - auto-guardian-network
+    depends_on:
+      - security-scanner
+    restart: unless-stopped
+
+  # خدمة CI/CD Scanner
+  cicd-scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile.cicd
+    container_name: auto-guardian-cicd
+    working_dir: /app
+    volumes:
+      - ./:/app:rw
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITLAB_TOKEN=${GITLAB_TOKEN}
+    command: python scripts/cicd_integrator.py /app
+    networks:
+      - auto-guardian-network
+    restart: unless-stopped
+
+volumes:
+  scan_results:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  auto-guardian-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

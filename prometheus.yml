@@ -1,0 +1,47 @@
+# صيغة Prometheus للـ Auto-Guardian
+# Auto-Guardian Prometheus Configuration
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+scrape_configs:
+  # Auto-Guardian API Server
+  - job_name: 'auto-guardian-api'
+    static_configs:
+      - targets: ['api-server:8000']
+    metrics_path: /api/metrics
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+):\\d+'
+        replacement: '${1}'
+
+  # Auto-Guardian Security Scanner
+  - job_name: 'auto-guardian-scanner'
+    static_configs:
+      - targets: ['security-scanner:8000']
+    metrics_path: /metrics
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+):\\d+'
+        replacement: '${1}'
+
+  # Node Exporter for system metrics
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Docker metrics
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['docker-exporter:9323']
