@@ -181,7 +181,7 @@ class EnhancedSecurityScanner:
         VulnerabilityType.SQL_INJECTION: {
             "patterns": [
                 # استعلامات SQL غير آمنة
-                r'(?i)(execute|execute\(\s*["\']\s*(?:SELECT|INSERT|UPDATE|DELETE|DROP)',
+                r'(?i)(execute|execute\(\s*["\']\s*(?:SELECT|INSERT|UPDATE|DELETE|DROP))',
                 r'(?i)(cursor\.execute|db\.execute|sql\.execute)',
                 r'(?i)(%s.*format.*sql|format_string.*sql)',
                 r"(?i)(f\".*SELECT.*\{.*\})",
@@ -488,6 +488,9 @@ class EnhancedSecurityScanner:
         
         # مستوى الحد الأدنى للخطورة
         self.min_severity = SeverityLevel[self.config.get("min_severity", "LOW")]
+        
+        # قائمة الثغرات المكتشفة
+        self._vulnerabilities = []
         
         logger.info(f"تم تهيئة الماسح الأمني. المجلد: {self.target_dir}")
     
