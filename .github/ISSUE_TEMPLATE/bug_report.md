@@ -2,8 +2,9 @@
 name: "\U0001F41B الإبلاغ عن خطأ"
 about: الإبلاغ عن خطأ أو مشكلة في نظام الحارس التلقائي
 title: "[BUG] "
-labels: "bug"
-assignees: ""
+labels: bug
+assignees: ''
+
 ---
 
 ## وصف المشكلة

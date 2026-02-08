@@ -2,8 +2,9 @@
 name: "\U0001F512 الإبلاغ عن ثغرة أمنية"
 about: الإبلاغ عن ثغرة أمنية أو مشكلة أمان في نظام الحارس التلقائي
 title: "[SECURITY] "
-labels: "security"
-assignees: ""
+labels: ''
+assignees: ''
+
 ---
 
 ## وصف الثغرة
