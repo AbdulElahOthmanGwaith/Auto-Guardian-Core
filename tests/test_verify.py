@@ -1,5 +1,8 @@
 """اختبارات منخفضة المخاطر لمنطق verify.py."""
 
+import json
+import subprocess
+import sys
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -44,3 +47,32 @@ def test_zip_excludes_sensitive_files_and_symlinks(tmp_path: Path) -> None:
     assert ".env" not in names
     assert "private.pem" not in names
     assert "linked.txt" not in names
+
+
+def test_summary_exposes_machine_readable_counts(tmp_path: Path) -> None:
+    (tmp_path / "README.md").write_text("# Test\n", encoding="utf-8")
+    verifier = ProjectVerifier(tmp_path)
+
+    verifier.check_file_exists("README.md")
+    summary = verifier.summary()
+
+    assert summary["valid"] is True
+    assert summary["counts"]["success"] == 1
+    assert summary["errors"] == []
+
+
+def test_cli_check_only_json_is_parseable() -> None:
+    project_root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, "verify.py", "--check-only", "--json"],
+        cwd=project_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["valid"] is True
+    assert "archive" not in payload
+    assert payload["counts"]["errors"] == 0

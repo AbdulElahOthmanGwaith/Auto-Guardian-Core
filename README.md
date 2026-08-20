@@ -232,6 +232,26 @@ python scripts/notification_service.py
 python scripts/notification_service.py --test
 ```
 
+### التحقق والتغليف | Verification and Packaging
+
+يتيح `verify.py` التحقق من ملفات التوثيق والتغليف الآمن في ملف ZIP. يمكن استخدام نمط JSON داخل CI دون خلط رسائل العرض مع المخرجات الآلية:
+
+```bash
+# تحقق كامل ثم إنشاء ZIP
+python verify.py
+
+# تحقق فقط دون إنشاء أرشيف
+python verify.py --check-only
+
+# إخراج JSON مناسب لـ CI
+python verify.py --check-only --json
+
+# تحقق وإنشاء أرشيف باسم محدد
+python verify.py --output artifacts/auto-guardian-docs.zip
+```
+
+يستبعد التغليف الروابط الرمزية وملفات الأسرار والمفاتيح الخاصة تلقائيًا. يعيد الأمر رمز خروج غير صفري عند وجود أخطاء تحقق أو فشل إنشاء الأرشيف.
+
 ---
 
 ## 🌐 نقاط الوصول API | API Endpoints
