@@ -7,7 +7,6 @@ Auto Guardian System Verification and Packaging Script
 import os
 import sys
 import zipfile
-import subprocess
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
@@ -84,7 +83,9 @@ class ProjectVerifier:
             self.errors.append(f"SVG Error: {filepath}")
             return False
         except Exception as e:
-            print_warning(f"تحذير في {filepath}: {e}")
+            message = f"تحذير في {filepath}: {e}"
+            print_warning(message)
+            self.warnings.append(message)
             return False
     
     def validate_yaml(self, filepath):
@@ -104,7 +105,9 @@ class ProjectVerifier:
             self.errors.append(f"YAML Error: {filepath}")
             return False
         except Exception as e:
-            print_warning(f"تحذير في {filepath}: {e}")
+            message = f"تحذير في {filepath}: {e}"
+            print_warning(message)
+            self.warnings.append(message)
             return False
     
     def validate_makefile(self, filepath):
@@ -120,7 +123,9 @@ class ProjectVerifier:
                     print_success(f"Makefile صالح: {filepath}")
                     return True
                 else:
-                    print_warning(f"Makefile ينقصه أهداف: {missing}")
+                    message = f"Makefile ينقصه أهداف: {missing}"
+                    print_warning(message)
+                    self.warnings.append(message)
                     return True  # ليس خطأ حرج
         except Exception as e:
             print_error(f"خطأ في Makefile {filepath}: {e}")
@@ -138,7 +143,9 @@ class ProjectVerifier:
                     print_success(f"Markdown صالح: {filepath}")
                     return True
                 else:
-                    print_warning(f"Markdown قد ينقصه عنوان: {filepath}")
+                    message = f"Markdown قد ينقصه عنوان: {filepath}"
+                    print_warning(message)
+                    self.warnings.append(message)
                     return True
         except Exception as e:
             print_error(f"خطأ في Markdown {filepath}: {e}")
@@ -155,7 +162,9 @@ class ProjectVerifier:
                     print_success(f".editorconfig صالح: {filepath}")
                     return True
                 else:
-                    print_warning(f".editorconfig قد ينقصه إعدادات: {filepath}")
+                    message = f".editorconfig قد ينقصه إعدادات: {filepath}"
+                    print_warning(message)
+                    self.warnings.append(message)
                     return True
         except Exception as e:
             print_error(f"خطأ في .editorconfig {filepath}: {e}")
@@ -273,6 +282,19 @@ class ProjectPacker:
             """تحديد ما إذا كان يجب تضمين المسار"""
             name = os.path.basename(path)
             
+            # لا تتبع الروابط الرمزية أثناء التغليف؛ فقد تشير خارج المشروع.
+            if os.path.islink(path):
+                return False
+
+            # لا تُدرج ملفات الأسرار أو المفاتيح الخاصة حتى لو لم تكن في .gitignore.
+            sensitive_names = {'.env', '.npmrc', 'id_rsa', 'id_ed25519'}
+            if name in sensitive_names:
+                return False
+            if (name.startswith('.env.') and name != '.env.example') or name.endswith(('.pem', '.key', '.p12', '.pfx')):
+                return False
+            if name.startswith('credentials') or name.startswith('secrets'):
+                return False
+
             # استبعاد المجلدات
             if os.path.isdir(path):
                 return name not in ['.git', '__pycache__', 'build', 'dist', 'htmlcov', '.hypothesis', 'venv', 'node_modules', 'logs', 'backups', '.vscode', '.idea']
