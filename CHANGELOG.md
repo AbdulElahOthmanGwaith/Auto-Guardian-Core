@@ -207,6 +207,9 @@
 
 - إضافة `verify.py --check-only` للتحقق دون إنشاء أرشيف.
 - إضافة `verify.py --json` لإخراج ملخص قابل للاستهلاك من CI.
+- إضافة `verify.py --sarif PATH` لإخراج تقرير SARIF 2.1.0 مناسب لـ GitHub Code Scanning.
+- ربط تقرير SARIF بـ CI مع الاحتفاظ به كأثر ورفعه إلى Code Scanning دون جعل الرفع حاجبًا للبوابة.
+- إضافة اختبارات regression لتغطية schema ومخرجات SARIF.
 - إضافة الخيار `--output` لتحديد مسار أرشيف التوثيق.
 
 ### المُصحح

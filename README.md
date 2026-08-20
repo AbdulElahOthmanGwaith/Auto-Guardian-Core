@@ -246,9 +246,17 @@ python verify.py --check-only
 # إخراج JSON مناسب لـ CI
 python verify.py --check-only --json
 
+# إخراج JSON وSARIF لرفعه إلى GitHub Code Scanning
+mkdir -p test-results
+python verify.py --check-only --json \\
+  --sarif test-results/verification.sarif.json \\
+  > test-results/verification.json
+
 # تحقق وإنشاء أرشيف باسم محدد
 python verify.py --output artifacts/auto-guardian-docs.zip
 ```
+
+ينتج الخيار `--sarif` تقريرًا بصيغة **SARIF 2.1.0**، ويحتوي على الأخطاء والتحذيرات القابلة للعرض في أدوات التحليل الأمني. يرفع Workflow الخاص بالمشروع التقرير تلقائيًا إلى GitHub Code Scanning مع الاحتفاظ به كأثر CI.
 
 يستبعد التغليف الروابط الرمزية وملفات الأسرار والمفاتيح الخاصة تلقائيًا. يعيد الأمر رمز خروج غير صفري عند وجود أخطاء تحقق أو فشل إنشاء الأرشيف.
 

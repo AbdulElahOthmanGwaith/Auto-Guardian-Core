@@ -227,6 +227,61 @@ class ProjectVerifier:
             },
         }
 
+    def sarif_report(self):
+        """إنشاء تقرير SARIF 2.1.0 من الأخطاء والتحذيرات."""
+        rules = [
+            {
+                "id": "auto-guardian.error",
+                "name": "AutoGuardianError",
+                "shortDescription": {"text": "فشل تحقق Auto-Guardian-Core"},
+            },
+            {
+                "id": "auto-guardian.warning",
+                "name": "AutoGuardianWarning",
+                "shortDescription": {"text": "تحذير تحقق Auto-Guardian-Core"},
+            },
+        ]
+
+        results = []
+        for level, rule_id, messages in (
+            ("error", "auto-guardian.error", self.errors),
+            ("warning", "auto-guardian.warning", self.warnings),
+        ):
+            for message in messages:
+                result = {
+                    "ruleId": rule_id,
+                    "level": level,
+                    "message": {"text": str(message)},
+                }
+                location = self._sarif_location(message)
+                if location:
+                    result["locations"] = [{"physicalLocation": location}]
+                results.append(result)
+
+        return {
+            "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+            "version": "2.1.0",
+            "runs": [{
+                "tool": {"driver": {
+                    "name": "Auto-Guardian-Core",
+                    "informationUri": "https://github.com/AbdulElahOthmanGwaith/Auto-Guardian-Core",
+                    "rules": rules,
+                }},
+                "results": results,
+            }],
+        }
+
+    @staticmethod
+    def _sarif_location(message):
+        """استخراج مسار ملف آمن من رسائل التحقق المعروفة."""
+        text = str(message)
+        if ": " not in text:
+            return None
+        candidate = text.split(": ", 1)[1].split(" ", 1)[0].strip()
+        if not candidate or candidate.startswith("http"):
+            return None
+        return {"artifactLocation": {"uri": candidate}}
+
     def print_summary(self):
         """طباعة ملخص النتائج"""
         print_header("ملخص النتائج")
@@ -425,6 +480,11 @@ def main(argv=None):
         "--output",
         help="اسم أو مسار ملف ZIP الناتج",
     )
+    parser.add_argument(
+        "--sarif",
+        metavar="PATH",
+        help="حفظ تقرير SARIF 2.1.0 إلى المسار المحدد",
+    )
     args = parser.parse_args(argv)
 
     project_root = Path(__file__).parent.absolute()
@@ -435,6 +495,12 @@ def main(argv=None):
         with io.StringIO() as captured, contextlib.redirect_stdout(captured):
             is_valid = verifier.verify_all()
         result = verifier.summary()
+        if args.sarif:
+            Path(args.sarif).write_text(
+                json.dumps(verifier.sarif_report(), ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            result["sarif"] = str(Path(args.sarif))
         if is_valid and not args.check_only:
             packer = ProjectPacker(project_root)
             with io.StringIO() as captured, contextlib.redirect_stdout(captured):
@@ -449,6 +515,13 @@ def main(argv=None):
     print_header("نظام الحارس التلقائي - أداة التحقق والتجميد")
     print_info(f"مسار المشروع: {project_root}")
     is_valid = verifier.verify_all()
+
+    if args.sarif:
+        Path(args.sarif).write_text(
+            json.dumps(verifier.sarif_report(), ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print_info(f"تم حفظ تقرير SARIF: {args.sarif}")
 
     if not is_valid:
         print_error("فشل التحقق! يرجى تصحيح الأخطاء أولاً.")

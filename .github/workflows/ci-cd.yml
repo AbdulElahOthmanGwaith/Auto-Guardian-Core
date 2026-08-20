@@ -17,6 +17,9 @@ jobs:
   test:
     name: Test & Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     
     steps:
       - name: Checkout code
@@ -49,7 +52,8 @@ jobs:
       - name: Run CLI verification
         run: |
           echo "Running automation-friendly verification CLI..."
-          python verify.py --check-only --json --output test-results/verification.json
+          mkdir -p test-results
+          python verify.py --check-only --json --sarif test-results/verification.sarif.json > test-results/verification.json
       
       - name: Run basic tests
         run: |
@@ -75,6 +79,13 @@ jobs:
             test-results/
             coverage/
       
+      - name: Upload SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: test-results/verification.sarif.json
+
       - name: Comment PR with test results
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6

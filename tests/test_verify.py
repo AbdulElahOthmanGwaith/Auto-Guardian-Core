@@ -63,6 +63,43 @@ def test_summary_exposes_machine_readable_counts(tmp_path: Path) -> None:
     assert summary["errors"] == []
 
 
+def test_sarif_report_contains_schema_and_findings(tmp_path: Path) -> None:
+    verifier = ProjectVerifier(tmp_path)
+    verifier.errors.append("Missing: README.md")
+    verifier.warnings.append("تحذير في Makefile: نقص هدف")
+
+    report = verifier.sarif_report()
+
+    assert report["version"] == "2.1.0"
+    assert report["runs"][0]["tool"]["driver"]["name"] == "Auto-Guardian-Core"
+    results = report["runs"][0]["results"]
+    assert results[0]["level"] == "error"
+    assert results[0]["locations"][0]["physicalLocation"]["artifactLocation"]["uri"] == "README.md"
+    assert results[1]["level"] == "warning"
+
+
+def test_cli_check_only_json_with_sarif_is_parseable(tmp_path: Path) -> None:
+    project_root = Path(__file__).resolve().parents[1]
+    sarif_path = tmp_path / "results.sarif.json"
+    result = subprocess.run(
+        [sys.executable, "verify.py", "--check-only", "--json", "--sarif", str(sarif_path)],
+        cwd=project_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["valid"] is True
+    assert payload["sarif"] == str(sarif_path)
+    sarif = json.loads(sarif_path.read_text(encoding="utf-8"))
+    assert sarif["version"] == "2.1.0"
+    results = sarif["runs"][0]["results"]
+    assert all(item["level"] == "warning" for item in results)
+    assert any("editorconfig" in item["message"]["text"].lower() for item in results)
+
+
 def test_cli_check_only_json_is_parseable() -> None:
     project_root = Path(__file__).resolve().parents[1]
     result = subprocess.run(
