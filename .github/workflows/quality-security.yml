@@ -1,0 +1,82 @@
+name: Quality and security checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Reproducible checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: hashFiles('package.json', '**/package.json') != '' || hashFiles('*.js', '**/*.js') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: ${{ hashFiles('pnpm-lock.yaml') != '' && 'pnpm' || hashFiles('package-lock.json') != '' && 'npm' || '' }}
+
+      - name: Enable pnpm
+        if: hashFiles('pnpm-lock.yaml') != ''
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install pnpm dependencies
+        if: hashFiles('pnpm-lock.yaml') != ''
+        run: pnpm install --frozen-lockfile
+
+      - name: Install npm dependencies
+        if: hashFiles('pnpm-lock.yaml') == '' && hashFiles('package-lock.json') != ''
+        run: npm ci
+
+      - name: Validate JavaScript syntax
+        if: hashFiles('*.js', '**/*.js') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f -name '*.js' \
+            -not -path './node_modules/*' -not -path './dist/*' -not -path './build/*' \
+            -not -path './.git/*' | sort)
+          for file in "${files[@]}"; do
+            node --check "$file"
+          done
+
+      - name: Run security regression tests
+        if: hashFiles('tests/security-regression.cjs') != ''
+        run: node tests/security-regression.cjs
+
+      - name: Run package checks
+        if: hashFiles('package.json', '**/package.json') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          runner=npm
+          if [ -f pnpm-lock.yaml ]; then runner=pnpm; fi
+          has_script() { "$runner" pkg get "scripts.$1" 2>/dev/null | grep -qv '^null$'; }
+          if has_script test; then "$runner" run test --if-present; fi
+          if has_script lint; then "$runner" run lint; fi
+          if has_script check; then "$runner" run check; fi
+          if has_script typecheck; then "$runner" run typecheck; fi
+          if has_script build; then "$runner" run build; fi
+
+      - name: Compile Python sources
+        if: hashFiles('*.py', '**/*.py') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f -name '*.py' \
+            -not -path './.git/*' -not -path './.venv/*' -not -path './venv/*' | sort)
+          python3 -m py_compile "${files[@]}"
