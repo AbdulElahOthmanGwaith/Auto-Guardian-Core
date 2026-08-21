@@ -22,61 +22,62 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node.js
-        if: hashFiles('package.json', '**/package.json') != '' || hashFiles('*.js', '**/*.js') != ''
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: ${{ hashFiles('pnpm-lock.yaml') != '' && 'pnpm' || hashFiles('package-lock.json') != '' && 'npm' || '' }}
 
-      - name: Enable pnpm
-        if: hashFiles('pnpm-lock.yaml') != ''
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Install pnpm dependencies
-        if: hashFiles('pnpm-lock.yaml') != ''
-        run: pnpm install --frozen-lockfile
-
-      - name: Install npm dependencies
-        if: hashFiles('pnpm-lock.yaml') == '' && hashFiles('package-lock.json') != ''
-        run: npm ci
-
-      - name: Validate JavaScript syntax
-        if: hashFiles('*.js', '**/*.js') != ''
+      - name: Install locked dependencies
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(find . -type f -name '*.js' \
-            -not -path './node_modules/*' -not -path './dist/*' -not -path './build/*' \
-            -not -path './.git/*' | sort)
+          if [ -f pnpm-lock.yaml ]; then
+            npm install --global pnpm@10
+            pnpm install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f package.json ] && grep -Eq '"(dependencies|devDependencies|optionalDependencies)"[[:space:]]*:' package.json; then
+            npm install --no-package-lock --ignore-scripts --no-audit --no-fund
+          fi
+
+      - name: Validate tracked JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' files < <(git ls-files -z -- '*.js')
           for file in "${files[@]}"; do
             node --check "$file"
           done
 
       - name: Run security regression tests
-        if: hashFiles('tests/security-regression.cjs') != ''
-        run: node tests/security-regression.cjs
-
-      - name: Run package checks
-        if: hashFiles('package.json', '**/package.json') != ''
         shell: bash
         run: |
           set -euo pipefail
+          if [ -f tests/security-regression.cjs ]; then
+            node tests/security-regression.cjs
+          fi
+
+      - name: Run package checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f package.json ]; then exit 0; fi
           runner=npm
           if [ -f pnpm-lock.yaml ]; then runner=pnpm; fi
-          has_script() { "$runner" pkg get "scripts.$1" 2>/dev/null | grep -qv '^null$'; }
+          has_script() {
+            value=$("$runner" pkg get "scripts.$1" 2>/dev/null || printf 'null')
+            [ "$value" != 'null' ] && [ "$value" != '{}' ] && [ "$value" != '""' ]
+          }
           if has_script test; then "$runner" run test --if-present; fi
           if has_script lint; then "$runner" run lint; fi
           if has_script check; then "$runner" run check; fi
           if has_script typecheck; then "$runner" run typecheck; fi
           if has_script build; then "$runner" run build; fi
 
-      - name: Compile Python sources
-        if: hashFiles('*.py', '**/*.py') != ''
+      - name: Compile tracked Python sources
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(find . -type f -name '*.py' \
-            -not -path './.git/*' -not -path './.venv/*' -not -path './venv/*' | sort)
-          python3 -m py_compile "${files[@]}"
+          mapfile -d '' files < <(git ls-files -z -- '*.py')
+          if [ "${#files[@]}" -gt 0 ]; then
+            python3 -m py_compile "${files[@]}"
+          fi
