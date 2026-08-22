@@ -48,12 +48,14 @@ jobs:
             node --check "$file"
           done
 
-      - name: Run security regression tests
+      - name: Run regression tests
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f tests/security-regression.cjs ]; then
-            node tests/security-regression.cjs
+          if [ -d tests ]; then
+            while IFS= read -r -d '' file; do
+              node "$file"
+            done < <(find tests -maxdepth 1 -type f -name '*regression*.cjs' -print0 | sort -z)
           fi
 
       - name: Run package checks
